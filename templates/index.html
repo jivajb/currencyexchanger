@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Currency Exchanger</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Currency Exchanger</h1>
+        <form id="exchange-form">
+            <label for="from_currency">From Currency:</label>
+            <input type="text" id="from_currency" name="from_currency" required>
+            <label for="to_currency">To Currency:</label>
+            <input type="text" id="to_currency" name="to_currency" required>
+            <label for="amount">Amount:</label>
+            <input type="number" id="amount" name="amount" required>
+            <button type="submit">Exchange</button>
+        </form>
+        <div id="result"></div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#exchange-form').on('submit', function(e) {
+                e.preventDefault();
+                $.ajax({
+                    type: 'POST',
+                    url: '/exchange',
+                    data: $(this).serialize(),
+                    success: function(response) {
+                        if (response.error) {
+                            $('#result').html('Error: ' + response.error);
+                        } else {
+                            $('#result').html(`Exchanged Amount: ${response.exchanged_amount} <br> Exchange Rate: ${response.exchange_rate}`);
+                        }
+                    },
+                    error: function(error) {
+                        $('#result').html('Error: Unable to get exchange rate.');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
